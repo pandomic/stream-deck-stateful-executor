@@ -1,4 +1,5 @@
 install:
+	npm install -g @elgato/cli@latest;
 	npm install;
 
 build-templates:
