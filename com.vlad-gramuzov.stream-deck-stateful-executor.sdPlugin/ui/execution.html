@@ -1,0 +1,4713 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <title>Execution Settings</title>
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+        .title {
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            display: block;
+        }
+        .caption {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            display: block;
+        }
+        .matcher {
+            border: 1px solid #666;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<sdpi-item>
+    <h2 class="title">General Settings</h2>
+</sdpi-item>
+
+<sdpi-item>
+    <sdpi-checkbox setting="enableSuccessIndicator" label="Enable success indicator"></sdpi-checkbox>
+    <span class="caption">
+            Display default success indicator when the action completed without errors.
+        </span>
+</sdpi-item>
+
+<hr>
+
+<sdpi-item>
+    <h2 class="title">Custom Icons</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Enable to extend the range of state icons. Note you should not set the Key State Icons in this case and leave them set to default.
+        </span>
+</sdpi-item>
+
+<sdpi-item>
+    <sdpi-checkbox id="enableCustomIcons" setting="enableCustomIcons" label="Enable custom icons"></sdpi-checkbox>
+</sdpi-item>
+<div>
+    <sdpi-item label="Matched state icon path">
+        <sdpi-file setting="customIcons.matched" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+    <sdpi-item label="Unmatched state icon path">
+        <sdpi-file setting="customIcons.unmatched" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+    <sdpi-item label="Loading icon path">
+        <sdpi-file setting="customIcons.loading" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+</div>
+
+<hr>
+
+<sdpi-item>
+    <h2 class="title">Custom Titles</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Enable to extend the range of state titles. Note you should not set the Key State Title in this case and leave them blank.
+        </span>
+</sdpi-item>
+<div>
+    <sdpi-item label="Matched state title">
+        <sdpi-textfield
+                setting="customTitles.matched"
+                placeholder="Matched title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Unmatched state title">
+        <sdpi-textfield
+                setting="customTitles.unmatched"
+                placeholder="Unmatched title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Loading state title">
+        <sdpi-textfield
+            setting="customTitles.loading"
+            placeholder="Loading ◐"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+</div>
+
+<hr>
+
+<sdpi-item>
+    <sdpi-checkbox id="enablePolling" setting="pollingSettings.enable" label="Enable polling action"></sdpi-checkbox>
+</sdpi-item>
+<div id="pollingSettings" class="hidden">
+    <sdpi-item label="Polling interval (seconds)">
+        <sdpi-range
+            setting="pollingSettings.interval"
+            min="0"
+            max="10"
+            showlabels
+        >
+        </sdpi-range>
+    </sdpi-item>
+        <sdpi-item label="Action Type">
+            <sdpi-select id="pollingSettingsActionTypeCheckbox" setting="pollingSettings.actionType" placeholder="Action Type" onchange="alert(event)" required>
+                <option value="request">request</option>
+                <option value="shortcut">shortcut (MacOS)</option>
+                <option value="terminal">terminal</option>
+                <option value="script">script</option>
+            </sdpi-select>
+        </sdpi-item>
+        <div id="pollingSettings-shortcut-settings" class="hidden">
+            <sdpi-item label="Shortcut">
+                <sdpi-select
+                        setting="pollingSettings.shortcutName"
+                        placeholder="Shortcut"
+                        datasource="getShortcuts"
+                        loading="Fetching shortcuts..."
+                        hot-reload>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Shortcut input">
+                <sdpi-textarea setting="pollingSettings.shortcutInput" rows="10"></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="pollingSettings-request-settings">
+            <sdpi-item label="URL">
+                <sdpi-textfield
+                    setting="pollingSettings.requestUrl"
+                    placeholder="https://example.com"
+                    required>
+                </sdpi-textfield>
+            </sdpi-item>
+            <sdpi-item label="Method">
+                <sdpi-select setting="pollingSettings.requestMethod" placeholder="HTTP method" required>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Request Headers">
+                <sdpi-textarea
+                        setting="pollingSettings.requestHeaders"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+            <sdpi-item label="Request Body">
+                <sdpi-textarea
+                        setting="pollingSettings.requestBody"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="pollingSettings-terminal-settings">
+            <sdpi-item label="Command">
+                <sdpi-textarea setting="pollingSettings.terminalCommand" rows="10" required></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="pollingSettings-script-settings">
+            <sdpi-item label="Script Path">
+                <sdpi-file setting="pollingSettings.scriptPath" accept="text/x-shellscript" required></sdpi-file>
+            </sdpi-item>
+            <sdpi-item label="Shell Binary">
+                <sdpi-file setting="pollingSettings.scriptShellBinary" accept="application/octet-stream"></sdpi-file>
+            </sdpi-item>
+        </div>
+
+        <script>
+            document.getElementById('pollingSettingsActionTypeCheckbox').addEventListener('valuechange', function (event) {
+                const blockIds = [
+                    `pollingSettings-shortcut-settings`,
+                    `pollingSettings-terminal-settings`,
+                    `pollingSettings-request-settings`,
+                    `pollingSettings-script-settings`,
+                ];
+
+                const targetId = `pollingSettings-${event.target.value}-settings`;
+
+                for (const id of blockIds) {
+                    document.getElementById(id).classList.toggle('hidden', id !== targetId);
+                }
+            });
+        </script>
+</div>
+<script>
+    document.getElementById('enablePolling').addEventListener('valuechange', (event) => {
+        document.getElementById('pollingSettings').classList.toggle('hidden', !event.target.value);
+    });
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        document.getElementById('pollingSettings').classList.toggle('hidden', !(settings.pollingSettings && settings.pollingSettings.enable));
+    });
+</script>
+
+<hr>
+
+<sdpi-item>
+    <sdpi-checkbox id="enableAction" setting="actionSettings.enable" label="Enable click action"></sdpi-checkbox>
+</sdpi-item>
+<div id="actionSettings" class="hidden">
+        <sdpi-item label="Action Type">
+            <sdpi-select id="actionSettingsActionTypeCheckbox" setting="actionSettings.actionType" placeholder="Action Type" onchange="alert(event)" required>
+                <option value="request">request</option>
+                <option value="shortcut">shortcut (MacOS)</option>
+                <option value="terminal">terminal</option>
+                <option value="script">script</option>
+            </sdpi-select>
+        </sdpi-item>
+        <div id="actionSettings-shortcut-settings" class="hidden">
+            <sdpi-item label="Shortcut">
+                <sdpi-select
+                        setting="actionSettings.shortcutName"
+                        placeholder="Shortcut"
+                        datasource="getShortcuts"
+                        loading="Fetching shortcuts..."
+                        hot-reload>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Shortcut input">
+                <sdpi-textarea setting="actionSettings.shortcutInput" rows="10"></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="actionSettings-request-settings">
+            <sdpi-item label="URL">
+                <sdpi-textfield
+                    setting="actionSettings.requestUrl"
+                    placeholder="https://example.com"
+                    required>
+                </sdpi-textfield>
+            </sdpi-item>
+            <sdpi-item label="Method">
+                <sdpi-select setting="actionSettings.requestMethod" placeholder="HTTP method" required>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Request Headers">
+                <sdpi-textarea
+                        setting="actionSettings.requestHeaders"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+            <sdpi-item label="Request Body">
+                <sdpi-textarea
+                        setting="actionSettings.requestBody"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="actionSettings-terminal-settings">
+            <sdpi-item label="Command">
+                <sdpi-textarea setting="actionSettings.terminalCommand" rows="10" required></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="actionSettings-script-settings">
+            <sdpi-item label="Script Path">
+                <sdpi-file setting="actionSettings.scriptPath" accept="text/x-shellscript" required></sdpi-file>
+            </sdpi-item>
+            <sdpi-item label="Shell Binary">
+                <sdpi-file setting="actionSettings.scriptShellBinary" accept="application/octet-stream"></sdpi-file>
+            </sdpi-item>
+        </div>
+
+        <script>
+            document.getElementById('actionSettingsActionTypeCheckbox').addEventListener('valuechange', function (event) {
+                const blockIds = [
+                    `actionSettings-shortcut-settings`,
+                    `actionSettings-terminal-settings`,
+                    `actionSettings-request-settings`,
+                    `actionSettings-script-settings`,
+                ];
+
+                const targetId = `actionSettings-${event.target.value}-settings`;
+
+                for (const id of blockIds) {
+                    document.getElementById(id).classList.toggle('hidden', id !== targetId);
+                }
+            });
+        </script>
+</div>
+<script>
+    document.getElementById('enableAction').addEventListener('valuechange', (event) => {
+        document.getElementById('actionSettings').classList.toggle('hidden', !event.target.value);
+    });
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        document.getElementById('actionSettings').classList.toggle('hidden', !(settings.actionSettings && settings.actionSettings.enable));
+    });
+</script>
+
+<hr>
+
+<sdpi-item>
+    <h2 class="title">State matchers</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Define matchers to check the response from the action.
+            If the response matches the criteria, the state will be changed to that defined for the matcher.
+        </span>
+</sdpi-item>
+
+<sdpi-button onclick="javascript:addMatcher()">
+    Add Matcher
+</sdpi-button>
+
+    <div id="matcher-0" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.0.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.0.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.0.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.0.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.0.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('0')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-1" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.1.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.1.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.1.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.1.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.1.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('1')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-2" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.2.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.2.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.2.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.2.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.2.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('2')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-3" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.3.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.3.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.3.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.3.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.3.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('3')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-4" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.4.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.4.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.4.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.4.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.4.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('4')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-5" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.5.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.5.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.5.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.5.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.5.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('5')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-6" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.6.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.6.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.6.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.6.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.6.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('6')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-7" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.7.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.7.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.7.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.7.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.7.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('7')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-8" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.8.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.8.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.8.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.8.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.8.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('8')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-9" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.9.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.9.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.9.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.9.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.9.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('9')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-10" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.10.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.10.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.10.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.10.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.10.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('10')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-11" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.11.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.11.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.11.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.11.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.11.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('11')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-12" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.12.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.12.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.12.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.12.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.12.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('12')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-13" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.13.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.13.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.13.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.13.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.13.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('13')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-14" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.14.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.14.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.14.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.14.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.14.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('14')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-15" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.15.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.15.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.15.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.15.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.15.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('15')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-16" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.16.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.16.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.16.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.16.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.16.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('16')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-17" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.17.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.17.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.17.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.17.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.17.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('17')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-18" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.18.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.18.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.18.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.18.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.18.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('18')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-19" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.19.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.19.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.19.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.19.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.19.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('19')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-20" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.20.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.20.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.20.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.20.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.20.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('20')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-21" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.21.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.21.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.21.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.21.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.21.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('21')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-22" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.22.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.22.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.22.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.22.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.22.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('22')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-23" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.23.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.23.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.23.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.23.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.23.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('23')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-24" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.24.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.24.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.24.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.24.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.24.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('24')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-25" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.25.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.25.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.25.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.25.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.25.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('25')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-26" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.26.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.26.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.26.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.26.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.26.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('26')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-27" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.27.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.27.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.27.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.27.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.27.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('27')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-28" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.28.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.28.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.28.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.28.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.28.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('28')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-29" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.29.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.29.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.29.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.29.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.29.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('29')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-30" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.30.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.30.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.30.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.30.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.30.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('30')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-31" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.31.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.31.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.31.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.31.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.31.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('31')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-32" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.32.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.32.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.32.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.32.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.32.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('32')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-33" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.33.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.33.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.33.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.33.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.33.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('33')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-34" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.34.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.34.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.34.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.34.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.34.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('34')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-35" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.35.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.35.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.35.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.35.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.35.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('35')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-36" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.36.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.36.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.36.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.36.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.36.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('36')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-37" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.37.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.37.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.37.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.37.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.37.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('37')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-38" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.38.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.38.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.38.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.38.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.38.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('38')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-39" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.39.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.39.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.39.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.39.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.39.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('39')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-40" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.40.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.40.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.40.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.40.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.40.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('40')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-41" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.41.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.41.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.41.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.41.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.41.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('41')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-42" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.42.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.42.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.42.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.42.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.42.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('42')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-43" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.43.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.43.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.43.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.43.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.43.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('43')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-44" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.44.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.44.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.44.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.44.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.44.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('44')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-45" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.45.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.45.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.45.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.45.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.45.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('45')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-46" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.46.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.46.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.46.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.46.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.46.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('46')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-47" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.47.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.47.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.47.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.47.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.47.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('47')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-48" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.48.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.48.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.48.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.48.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.48.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('48')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-49" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.49.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.49.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.49.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.49.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.49.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('49')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-50" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.50.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.50.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.50.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.50.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.50.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('50')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-51" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.51.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.51.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.51.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.51.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.51.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('51')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-52" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.52.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.52.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.52.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.52.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.52.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('52')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-53" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.53.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.53.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.53.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.53.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.53.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('53')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-54" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.54.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.54.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.54.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.54.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.54.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('54')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-55" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.55.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.55.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.55.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.55.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.55.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('55')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-56" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.56.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.56.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.56.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.56.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.56.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('56')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-57" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.57.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.57.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.57.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.57.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.57.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('57')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-58" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.58.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.58.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.58.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.58.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.58.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('58')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-59" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.59.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.59.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.59.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.59.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.59.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('59')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-60" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.60.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.60.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.60.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.60.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.60.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('60')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-61" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.61.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.61.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.61.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.61.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.61.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('61')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-62" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.62.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.62.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.62.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.62.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.62.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('62')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-63" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.63.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.63.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.63.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.63.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.63.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('63')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-64" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.64.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.64.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.64.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.64.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.64.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('64')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-65" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.65.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.65.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.65.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.65.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.65.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('65')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-66" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.66.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.66.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.66.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.66.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.66.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('66')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-67" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.67.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.67.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.67.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.67.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.67.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('67')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-68" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.68.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.68.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.68.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.68.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.68.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('68')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-69" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.69.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.69.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.69.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.69.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.69.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('69')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-70" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.70.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.70.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.70.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.70.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.70.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('70')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-71" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.71.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.71.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.71.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.71.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.71.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('71')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-72" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.72.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.72.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.72.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.72.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.72.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('72')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-73" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.73.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.73.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.73.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.73.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.73.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('73')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-74" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.74.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.74.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.74.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.74.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.74.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('74')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-75" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.75.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.75.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.75.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.75.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.75.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('75')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-76" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.76.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.76.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.76.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.76.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.76.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('76')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-77" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.77.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.77.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.77.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.77.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.77.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('77')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-78" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.78.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.78.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.78.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.78.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.78.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('78')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-79" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.79.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.79.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.79.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.79.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.79.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('79')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-80" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.80.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.80.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.80.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.80.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.80.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('80')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-81" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.81.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.81.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.81.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.81.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.81.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('81')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-82" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.82.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.82.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.82.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.82.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.82.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('82')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-83" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.83.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.83.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.83.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.83.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.83.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('83')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-84" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.84.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.84.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.84.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.84.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.84.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('84')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-85" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.85.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.85.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.85.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.85.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.85.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('85')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-86" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.86.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.86.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.86.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.86.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.86.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('86')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-87" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.87.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.87.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.87.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.87.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.87.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('87')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-88" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.88.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.88.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.88.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.88.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.88.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('88')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-89" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.89.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.89.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.89.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.89.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.89.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('89')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-90" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.90.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.90.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.90.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.90.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.90.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('90')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-91" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.91.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.91.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.91.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.91.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.91.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('91')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-92" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.92.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.92.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.92.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.92.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.92.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('92')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-93" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.93.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.93.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.93.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.93.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.93.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('93')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-94" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.94.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.94.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.94.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.94.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.94.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('94')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-95" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.95.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.95.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.95.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.95.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.95.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('95')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-96" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.96.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.96.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.96.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.96.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.96.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('96')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-97" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.97.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.97.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.97.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.97.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.97.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('97')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-98" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.98.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.98.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.98.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.98.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.98.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('98')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-99" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.99.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.99.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.99.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.99.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.99.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('99')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+    <div id="matcher-100" class="matcher hidden">
+        <sdpi-item label="Field">
+            <sdpi-textfield
+                setting="matchers.100.field"
+                placeholder="JSON path"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="Operator">
+            <sdpi-select cla setting="matchers.100.operator" placeholder="Operator" required>
+                <option value="equals">string equals</option>
+                <option value="not_equals">string not equals</option>
+                <option value="includes">string includes</option>
+                <option value="=">equals</option>
+                <option value=">">greater than</option>
+                <option value=">=">greater or equals to</option>
+                <option value="<">less that</option>
+                <option value="<=">less or equals to</option>
+            </sdpi-select>
+        </sdpi-item>
+        <sdpi-item label="Value">
+            <sdpi-textfield
+                setting="matchers.100.value"
+                placeholder="Expected value"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State title">
+            <sdpi-textfield
+                setting="matchers.100.stateTitle"
+                placeholder="State title"
+            >
+            </sdpi-textfield>
+        </sdpi-item>
+        <sdpi-item label="State icon">
+            <sdpi-file setting="matchers.100.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        </sdpi-item>
+        <sdpi-item>
+            <sdpi-button onclick="javascript:removeMatcher('100')">
+                Remove
+            </sdpi-button>
+        </sdpi-item>
+    </div>
+
+<script>
+    // Show/hide matchers depending on how many are present
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        const numMatchers = document.querySelectorAll('.matcher').length;
+        const presentMatcherIndexes = Array.from(new Set(Object.keys(settings.matchers || {}))).map(Number);
+
+        for (let i = 0; i < numMatchers; i++) {
+            if (presentMatcherIndexes.includes(i)) {
+                document.getElementById(`matcher-${i}`).classList.remove('hidden');
+            } else {
+                document.getElementById(`matcher-${i}`).classList.add('hidden');
+            }
+        }
+    });
+</script>
+
+<script>
+    const removeMatcher = async (idx) => {
+        const settings = await SDPIComponents.streamDeckClient.getSettings();
+        delete settings.settings.matchers[idx];
+        await SDPIComponents.streamDeckClient.setSettings(settings.settings);
+        await SDPIComponents.streamDeckClient.getSettings();
+    };
+
+    const addMatcher = async () => {
+        const settings = await SDPIComponents.streamDeckClient.getSettings();
+        const presentMatcherIndexes = Array.from(new Set(Object.keys(settings.settings.matchers || {}))).map(Number);
+        const maxIndex = Math.max(...presentMatcherIndexes, -1);
+
+        if (!settings.settings.matchers) {
+            settings.settings.matchers = {};
+        }
+
+        settings.settings.matchers[maxIndex + 1] = {};
+
+        await SDPIComponents.streamDeckClient.setSettings(settings.settings);
+        await SDPIComponents.streamDeckClient.getSettings();
+    };
+</script>
+</body>
+
+</html>

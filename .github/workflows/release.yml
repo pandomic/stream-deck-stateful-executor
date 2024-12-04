@@ -1,0 +1,25 @@
+on:
+  push:
+    tags:
+      - '*'
+
+name: Upload Release Asset
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: actions/setup-node@v4
+      node-version: '20'
+    - name: Install Dependencies
+      run: make install
+    - name: Build
+      run: make build
+    - name: Validate
+      run: make build
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+          files: com.vlad-gramuzov.stream-deck-stateful-executor.sdPlugin

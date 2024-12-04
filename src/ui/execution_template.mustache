@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <title>Execution Settings</title>
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+        .title {
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            display: block;
+        }
+        .caption {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            display: block;
+        }
+        .matcher {
+            border: 1px solid #666;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<sdpi-item>
+    <h2 class="title">General Settings</h2>
+</sdpi-item>
+
+<sdpi-item>
+    <sdpi-checkbox setting="enableSuccessIndicator" label="Enable success indicator"></sdpi-checkbox>
+    <span class="caption">
+            Display default success indicator when the action completed without errors.
+        </span>
+</sdpi-item>
+
+<hr>
+
+<sdpi-item>
+    <h2 class="title">Custom Icons</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Enable to extend the range of state icons. Note you should not set the Key State Icons in this case and leave them set to default.
+        </span>
+</sdpi-item>
+
+<sdpi-item>
+    <sdpi-checkbox id="enableCustomIcons" setting="enableCustomIcons" label="Enable custom icons"></sdpi-checkbox>
+</sdpi-item>
+<div>
+    <sdpi-item label="Matched state icon path">
+        <sdpi-file setting="customIcons.matched" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+    <sdpi-item label="Unmatched state icon path">
+        <sdpi-file setting="customIcons.unmatched" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+    <sdpi-item label="Loading icon path">
+        <sdpi-file setting="customIcons.loading" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+</div>
+
+<hr>
+
+<sdpi-item>
+    <h2 class="title">Custom Titles</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Enable to extend the range of state titles. Note you should not set the Key State Title in this case and leave them blank.
+        </span>
+</sdpi-item>
+<div>
+    <sdpi-item label="Matched state title">
+        <sdpi-textfield
+                setting="customTitles.matched"
+                placeholder="Matched title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Unmatched state title">
+        <sdpi-textfield
+                setting="customTitles.unmatched"
+                placeholder="Unmatched title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Loading state title">
+        <sdpi-textfield
+            setting="customTitles.loading"
+            placeholder="Loading ◐"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+</div>
+
+<hr>
+
+<sdpi-item>
+    <sdpi-checkbox id="enablePolling" setting="pollingSettings.enable" label="Enable polling action"></sdpi-checkbox>
+</sdpi-item>
+<div id="pollingSettings" class="hidden">
+    <sdpi-item label="Polling interval (seconds)">
+        <sdpi-range
+            setting="pollingSettings.interval"
+            min="0"
+            max="10"
+            showlabels
+        >
+        </sdpi-range>
+    </sdpi-item>
+    {{#pollingSettings}}
+        {{> action_settings_template}}
+    {{/pollingSettings}}
+</div>
+<script>
+    document.getElementById('enablePolling').addEventListener('valuechange', (event) => {
+        document.getElementById('pollingSettings').classList.toggle('hidden', !event.target.value);
+    });
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        document.getElementById('pollingSettings').classList.toggle('hidden', !(settings.pollingSettings && settings.pollingSettings.enable));
+    });
+</script>
+
+<hr>
+
+<sdpi-item>
+    <sdpi-checkbox id="enableAction" setting="actionSettings.enable" label="Enable click action"></sdpi-checkbox>
+</sdpi-item>
+<div id="actionSettings" class="hidden">
+    {{#actionSettings}}
+        {{> action_settings_template}}
+    {{/actionSettings}}
+</div>
+<script>
+    document.getElementById('enableAction').addEventListener('valuechange', (event) => {
+        document.getElementById('actionSettings').classList.toggle('hidden', !event.target.value);
+    });
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        document.getElementById('actionSettings').classList.toggle('hidden', !(settings.actionSettings && settings.actionSettings.enable));
+    });
+</script>
+
+<hr>
+
+<sdpi-item>
+    <h2 class="title">State matchers</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Define matchers to check the response from the action.
+            If the response matches the criteria, the state will be changed to that defined for the matcher.
+        </span>
+</sdpi-item>
+
+<sdpi-button onclick="javascript:addMatcher()">
+    Add Matcher
+</sdpi-button>
+
+{{#matchers}}
+    {{> matcher_template}}
+{{/matchers}}
+
+<script>
+    // Show/hide matchers depending on how many are present
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        const numMatchers = document.querySelectorAll('.matcher').length;
+        const presentMatcherIndexes = Array.from(new Set(Object.keys(settings.matchers || {}))).map(Number);
+
+        for (let i = 0; i < numMatchers; i++) {
+            if (presentMatcherIndexes.includes(i)) {
+                document.getElementById(`matcher-${i}`).classList.remove('hidden');
+            } else {
+                document.getElementById(`matcher-${i}`).classList.add('hidden');
+            }
+        }
+    });
+</script>
+
+<script>
+    const removeMatcher = async (idx) => {
+        const settings = await SDPIComponents.streamDeckClient.getSettings();
+        delete settings.settings.matchers[idx];
+        await SDPIComponents.streamDeckClient.setSettings(settings.settings);
+        await SDPIComponents.streamDeckClient.getSettings();
+    };
+
+    const addMatcher = async () => {
+        const settings = await SDPIComponents.streamDeckClient.getSettings();
+        const presentMatcherIndexes = Array.from(new Set(Object.keys(settings.settings.matchers || {}))).map(Number);
+        const maxIndex = Math.max(...presentMatcherIndexes, -1);
+
+        if (!settings.settings.matchers) {
+            settings.settings.matchers = {};
+        }
+
+        settings.settings.matchers[maxIndex + 1] = {};
+
+        await SDPIComponents.streamDeckClient.setSettings(settings.settings);
+        await SDPIComponents.streamDeckClient.getSettings();
+    };
+</script>
+</body>
+
+</html>

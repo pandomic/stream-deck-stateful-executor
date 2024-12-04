@@ -1,0 +1,54 @@
+{
+	"Name": "Stateful Executor",
+	"Version": "0.1.0.0",
+	"Author": "Vlad Gramuzov",
+	"Actions": [
+		{
+			"Name": "Execution",
+			"UUID": "com.vlad-gramuzov.stream-deck-stateful-executor.execution",
+			"Icon": "imgs/icons/execution",
+			"Tooltip": "Executes selected action",
+			"PropertyInspectorPath": "ui/execution.html",
+			"DisableAutomaticStates": true,
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Name": "Matched",
+					"Image": "imgs/actions/matched",
+					"TitleAlignment": "bottom"
+				},
+				{
+					"Name": "Unmatched",
+					"Image": "imgs/actions/unmatched",
+					"TitleAlignment": "bottom"
+				}
+			]
+		}
+	],
+	"Category": "Stateful Executor",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"Description": "Execute HTTP Requests, Apple Shortcuts, Terminal Commands, and Shell Scripts with dynamic button state updates based on execution results",
+	"Icon": "imgs/plugin/marketplace",
+	"SDKVersion": 2,
+	"Software": {
+		"MinimumVersion": "6.4"
+	},
+	"OS": [
+		{
+			"Platform": "mac",
+			"MinimumVersion": "10.15"
+		},
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "20",
+		"Debug": "enabled"
+	},
+	"UUID": "com.vlad-gramuzov.stream-deck-stateful-executor"
+}

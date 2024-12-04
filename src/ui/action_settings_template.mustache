@@ -1,0 +1,83 @@
+<sdpi-item label="Action Type">
+    <sdpi-select id="{{name}}ActionTypeCheckbox" setting="{{name}}.actionType" placeholder="Action Type" onchange="alert(event)" required>
+        <option value="request">request</option>
+        <option value="shortcut">shortcut (MacOS)</option>
+        <option value="terminal">terminal</option>
+        <option value="script">script</option>
+    </sdpi-select>
+</sdpi-item>
+<div id="{{name}}-shortcut-settings" class="hidden">
+    <sdpi-item label="Shortcut">
+        <sdpi-select
+                setting="{{name}}.shortcutName"
+                placeholder="Shortcut"
+                datasource="getShortcuts"
+                loading="Fetching shortcuts..."
+                hot-reload>
+        </sdpi-select>
+    </sdpi-item>
+    <sdpi-item label="Shortcut input">
+        <sdpi-textarea setting="{{name}}.shortcutInput" rows="10"></sdpi-textarea>
+    </sdpi-item>
+</div>
+<div id="{{name}}-request-settings">
+    <sdpi-item label="URL">
+        <sdpi-textfield
+            setting="{{name}}.requestUrl"
+            placeholder="https://example.com"
+            required>
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Method">
+        <sdpi-select setting="{{name}}.requestMethod" placeholder="HTTP method" required>
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+        </sdpi-select>
+    </sdpi-item>
+    <sdpi-item label="Request Headers">
+        <sdpi-textarea
+                setting="{{name}}.requestHeaders"
+                rows="10"
+        >
+        </sdpi-textarea>
+    </sdpi-item>
+    <sdpi-item label="Request Body">
+        <sdpi-textarea
+                setting="{{name}}.requestBody"
+                rows="10"
+        >
+        </sdpi-textarea>
+    </sdpi-item>
+</div>
+<div id="{{name}}-terminal-settings">
+    <sdpi-item label="Command">
+        <sdpi-textarea setting="{{name}}.terminalCommand" rows="10" required></sdpi-textarea>
+    </sdpi-item>
+</div>
+<div id="{{name}}-script-settings">
+    <sdpi-item label="Script Path">
+        <sdpi-file setting="{{name}}.scriptPath" accept="text/x-shellscript" required></sdpi-file>
+    </sdpi-item>
+    <sdpi-item label="Shell Binary">
+        <sdpi-file setting="{{name}}.scriptShellBinary" accept="application/octet-stream"></sdpi-file>
+    </sdpi-item>
+</div>
+
+<script>
+    document.getElementById('{{name}}ActionTypeCheckbox').addEventListener('valuechange', function (event) {
+        const blockIds = [
+            `{{name}}-shortcut-settings`,
+            `{{name}}-terminal-settings`,
+            `{{name}}-request-settings`,
+            `{{name}}-script-settings`,
+        ];
+
+        const targetId = `{{name}}-${event.target.value}-settings`;
+
+        for (const id of blockIds) {
+            document.getElementById(id).classList.toggle('hidden', id !== targetId);
+        }
+    });
+</script>

@@ -1,0 +1,43 @@
+<div id="matcher-{{matcher}}" class="matcher hidden">
+    <sdpi-item label="Field">
+        <sdpi-textfield
+            setting="matchers.{{matcher}}.field"
+            placeholder="JSON path"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Operator">
+        <sdpi-select cla setting="matchers.{{matcher}}.operator" placeholder="Operator" required>
+            <option value="equals">string equals</option>
+            <option value="not_equals">string not equals</option>
+            <option value="includes">string includes</option>
+            <option value="=">equals</option>
+            <option value=">">greater than</option>
+            <option value=">=">greater or equals to</option>
+            <option value="<">less that</option>
+            <option value="<=">less or equals to</option>
+        </sdpi-select>
+    </sdpi-item>
+    <sdpi-item label="Value">
+        <sdpi-textfield
+            setting="matchers.{{matcher}}.value"
+            placeholder="Expected value"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="State title">
+        <sdpi-textfield
+            setting="matchers.{{matcher}}.stateTitle"
+            placeholder="State title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="State icon">
+        <sdpi-file setting="matchers.{{matcher}}.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+    </sdpi-item>
+    <sdpi-item>
+        <sdpi-button onclick="javascript:removeMatcher('{{matcher}}')">
+            Remove
+        </sdpi-button>
+    </sdpi-item>
+</div>
