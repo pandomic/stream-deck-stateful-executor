@@ -19,7 +19,7 @@ jobs:
     - name: Build
       run: make build
     - name: Validate
-      run: make build
+      run: make validate
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
