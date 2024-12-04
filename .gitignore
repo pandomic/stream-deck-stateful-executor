@@ -13,4 +13,4 @@ node_modules/
 .DS_Store
 
 # Built plugin
-*.streadDeckPlugin
+*.streamDeckPlugin
