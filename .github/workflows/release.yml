@@ -23,4 +23,4 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-          files: com.vlad-gramuzov.stream-deck-stateful-executor.sdPlugin
+          files: com.vlad-gramuzov.stream-deck-stateful-executor.streamDeckPlugin
