@@ -16,9 +16,6 @@ export class RequestExecutor implements Executor {
 
     this.validateResponse(response);
 
-    const json = await response.json();
-    this.logger.debug('Request response', json);
-
     return this.parseResponse(response);
   }
 
@@ -37,7 +34,7 @@ export class RequestExecutor implements Executor {
   private makeRequest(settings: ExecutorSettings) {
     return fetch(settings.requestUrl as string, {
       method: settings.requestMethod ?? 'GET',
-      headers: settings.requestHeaders ?? {},
+      headers: JSON.parse(settings.requestHeaders ?? '{}'),
       body: settings.requestBody,
     });
   }

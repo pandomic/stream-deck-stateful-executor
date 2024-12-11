@@ -5,7 +5,7 @@ export type ExecutorSettings = {
   actionType: ActionType;
   requestMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   requestUrl?: string;
-  requestHeaders?: Record<string, string>;
+  requestHeaders?: string;
   requestBody?: string;
 
   shortcutName?: string;
