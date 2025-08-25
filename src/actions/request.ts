@@ -25,9 +25,11 @@ import streamDeck, {
   action,
   KeyAction,
   JsonValue,
-  KeyDownEvent, SendToPluginEvent,
+  KeyDownEvent,
+  SendToPluginEvent,
   SingletonAction,
-  WillAppearEvent
+  WillAppearEvent,
+  WillDisappearEvent
 } from "@elgato/streamdeck";
 
 const UI_GET_SHORTCUTS_DATASOURCE = 'getShortcuts';
@@ -37,6 +39,8 @@ const STATE_UNMATCHED = 1;
 
 @action({ UUID: "com.vlad-gramuzov.stream-deck-stateful-executor.execution" })
 export class RequestExecutorAction extends SingletonAction<RequestExecutorSettings> {
+  private pollingInProgress = false;
+
   override async onSendToPlugin(ev: SendToPluginEvent<JsonValue, RequestExecutorSettings>): Promise<void> {
     if ((ev.payload as any).event === UI_GET_SHORTCUTS_DATASOURCE) {
       streamDeck.ui.current?.sendToPropertyInspector({
@@ -47,8 +51,14 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
   }
 
   override async onWillAppear(ev: WillAppearEvent<RequestExecutorSettings>): Promise<void> {
+    this.pollingInProgress = true;
+
     await this.setDefaultState(ev.action as KeyAction, STATE_MATCHED);
     await this.startPolling(ev.action as KeyAction);
+  }
+
+  override onWillDisappear(ev: WillDisappearEvent<RequestExecutorSettings>): Promise<void> | void {
+    this.pollingInProgress = false;
   }
 
   override async onKeyDown(ev: KeyDownEvent<RequestExecutorSettings>): Promise<void> {
@@ -69,6 +79,10 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
 
       streamDeck.logger.debug('Polling interval', settings.pollingSettings?.interval ?? 1);
       await wait((settings.pollingSettings?.interval ?? 1) * 1000);
+
+      if (!this.pollingInProgress) {
+        break;
+      }
     }
   }
 
