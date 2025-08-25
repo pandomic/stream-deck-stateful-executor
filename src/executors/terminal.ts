@@ -28,6 +28,12 @@ export class TerminalExecutor implements Executor {
 
   private async parseOutput(output: string | null | undefined): Promise<Record<string, any>> {
     this.logger.debug('Terminal output', output);
-    return JSON.parse(output ?? '{}');
+
+    try {
+      return JSON.parse(output ?? '{}');
+    } catch (error) {
+      this.logger.error('Failed to parse terminal output', error);
+      return {};
+    }
   }
 }
