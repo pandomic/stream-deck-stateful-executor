@@ -6,6 +6,8 @@ import { execSync } from 'child_process';
 import { Executor } from './base';
 import { ExecutorSettings } from '../types';
 
+const DEFAULT_EXEC_TIMEOUT = 10_000; // 10 seconds
+
 export class ShortcutExecutor implements Executor {
   private logger: Logger;
 
@@ -52,7 +54,7 @@ export class ShortcutExecutor implements Executor {
   private executeShortcut(inputFilePath: string, outputFilePath: string, shortcutName: string) {
     try {
       this.logger.debug(`shortcuts run "${shortcutName}" --input-path ${inputFilePath} --output-path ${outputFilePath}`);
-      execSync(`shortcuts run "${shortcutName}" --input-path ${inputFilePath} --output-path ${outputFilePath}`);
+      execSync(`shortcuts run "${shortcutName}" --input-path ${inputFilePath} --output-path ${outputFilePath}`, { timeout: DEFAULT_EXEC_TIMEOUT });
     } catch (e) {
       this.logger.error(e);
       throw new Error('Error executing shortcut');
@@ -60,12 +62,11 @@ export class ShortcutExecutor implements Executor {
   }
 
   private readOutputFromFile(outputFilePath: string) {
-    const output = readFileSync(outputFilePath).toString();
-    this.logger.debug('Shortcut output', output);
-
     let jsonOutput = {};
 
     try {
+      const output = readFileSync(outputFilePath).toString();
+      this.logger.debug('Shortcut output', output);
       jsonOutput = JSON.parse(output);
     } catch (e) {
       this.logger.debug('Unable to parse shortcut output as json');
