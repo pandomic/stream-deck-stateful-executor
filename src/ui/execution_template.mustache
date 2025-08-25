@@ -59,12 +59,21 @@
 <div>
     <sdpi-item label="Matched state icon path">
         <sdpi-file setting="customIcons.matched" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        <sdpi-button onclick="javascript:setSetting('customIcons.matched', '')">
+            Clear
+        </sdpi-button>
     </sdpi-item>
     <sdpi-item label="Unmatched state icon path">
         <sdpi-file setting="customIcons.unmatched" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        <sdpi-button onclick="javascript:setSetting('customIcons.unmatched', '')">
+            Clear
+        </sdpi-button>
     </sdpi-item>
     <sdpi-item label="Loading icon path">
         <sdpi-file setting="customIcons.loading" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        <sdpi-button onclick="javascript:setSetting('customIcons.loading', '')">
+            Clear
+        </sdpi-button>
     </sdpi-item>
 </div>
 
@@ -189,6 +198,22 @@
     const removeMatcher = async (idx) => {
         const settings = await SDPIComponents.streamDeckClient.getSettings();
         delete settings.settings.matchers[idx];
+        await SDPIComponents.streamDeckClient.setSettings(settings.settings);
+        await SDPIComponents.streamDeckClient.getSettings();
+    };
+
+    const setSetting = async (setting, value) => {
+        const settings = await SDPIComponents.streamDeckClient.getSettings();
+        const path = setting.split('.');
+
+        let pointer = settings.settings;
+        for (let i = 0; i < path.length; i++) {
+            if (i === path.length - 1) {
+                pointer[path[i]] = value;
+            }
+            pointer = pointer[path[i]];
+        }
+
         await SDPIComponents.streamDeckClient.setSettings(settings.settings);
         await SDPIComponents.streamDeckClient.getSettings();
     };

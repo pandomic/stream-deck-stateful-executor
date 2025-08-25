@@ -34,6 +34,9 @@
     </sdpi-item>
     <sdpi-item label="State icon">
         <sdpi-file setting="matchers.{{matcher}}.stateIconPath" accept="image/png, image/webp, image/jpeg, image/svg+xml"></sdpi-file>
+        <sdpi-button onclick="javascript:setSetting('matchers.{{matcher}}.stateIconPath', '')">
+            Clear
+        </sdpi-button>
     </sdpi-item>
     <sdpi-item>
         <sdpi-button onclick="javascript:removeMatcher('{{matcher}}')">
