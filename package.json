@@ -1,6 +1,6 @@
 {
     "name": "com.vlad-gramuzov.stream-deck-stateful-executor",
-    "version": "0.1.0.0",
+    "version": "0.1.1.0",
     "description": "Execute HTTP Requests, Apple Shortcuts, Terminal Commands, and Shell Scripts with dynamic button state updates based on execution results",
     "scripts": {
         "build": "rollup -c",
