@@ -2,6 +2,19 @@
 
 Stateful Executor is the automation plugin for your Stream Deck, enabling execution of HTTP Requests, Apple Shortcuts, Terminal Commands, Shell Scripts with dynamic button state updates based on execution results.
 
+## Installation
+
+### Elgato Marketplace
+
+1. Go to the Stateful Executor [page](https://marketplace.elgato.com/product/stateful-executor-e9612a4f-b8d7-44f8-a5ed-9ad9f9ae3064) on Elgato Marketplace.
+2. Click on the "Get" button and follow the prompt to complete the installation.
+
+### Manual Installation
+
+1. Go to the [releases](https://github.com/pandomic/stream-deck-stateful-executor/releases) page.
+2. Download the latest `.streamDeckPlugin` file.
+3. Double-click the downloaded file to install it, by following the prompt.
+
 ## Configuration
 
 ### General Settings
