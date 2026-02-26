@@ -28,3 +28,33 @@ export type MatcherSettings = {
   stateTitle?: string;
   stateIconPath?: string;
 }
+
+export type RequestExecutorSettings = {
+  successTitle?: string;
+  failedTitle?: string;
+
+  pollingSettings?: PollingExecutorSettings;
+  actionSettings?: ExecutorSettings;
+
+  enableSuccessIndicator?: boolean;
+};
+
+export type RequestMatcherSettings = {
+  customIcons?: {
+    matched?: string;
+    unmatched?: string;
+    loading?: string;
+  },
+  customTitles?: {
+    matched?: string;
+    unmatched?: string;
+    loading?: string;
+  }
+
+  pollingSettings?: PollingExecutorSettings;
+  actionSettings?: ExecutorSettings;
+
+  matchers?: Record<string, MatcherSettings>;
+
+  enableSuccessIndicator?: boolean;
+};

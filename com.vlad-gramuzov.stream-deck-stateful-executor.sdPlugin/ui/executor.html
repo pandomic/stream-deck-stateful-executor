@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <title>Execution Settings</title>
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+        .title {
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            display: block;
+        }
+        .caption {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            display: block;
+        }
+        .matcher {
+            border: 1px solid #666;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<sdpi-item>
+    <h2 class="title">General Settings</h2>
+</sdpi-item>
+
+<sdpi-item>
+    <sdpi-checkbox setting="enableSuccessIndicator" label="Enable success indicator"></sdpi-checkbox>
+    <span class="caption">
+            Display default success indicator when the action completed without errors.
+        </span>
+</sdpi-item>
+
+<hr>
+
+
+<sdpi-item>
+    <h2 class="title">Custom Titles</h2>
+</sdpi-item>
+<sdpi-item>
+        <span class="caption">
+            Enable to set custom titles for succeeded and failed requests. If not set, Default Action title will be used.
+        </span>
+</sdpi-item>
+<div>
+    <sdpi-item label="Successful request title">
+        <sdpi-textfield
+                setting="successTitle"
+                placeholder="Success title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+    <sdpi-item label="Failed request title">
+        <sdpi-textfield
+                setting="failedTitle"
+                placeholder="Failed title"
+        >
+        </sdpi-textfield>
+    </sdpi-item>
+</div>
+
+<sdpi-item>
+    <sdpi-checkbox id="enablePolling" setting="pollingSettings.enable" label="Enable polling action"></sdpi-checkbox>
+</sdpi-item>
+<div id="pollingSettings" class="hidden">
+    <sdpi-item label="Polling interval (seconds)">
+        <sdpi-range
+            setting="pollingSettings.interval"
+            min="0"
+            max="10"
+            showlabels
+        >
+        </sdpi-range>
+    </sdpi-item>
+        <sdpi-item label="Action Type">
+            <sdpi-select id="pollingSettingsActionTypeCheckbox" setting="pollingSettings.actionType" placeholder="Action Type" onchange="alert(event)" required>
+                <option value="request">request</option>
+                <option value="shortcut">shortcut (MacOS)</option>
+                <option value="terminal">terminal</option>
+                <option value="script">script</option>
+            </sdpi-select>
+        </sdpi-item>
+        <div id="pollingSettings-shortcut-settings" class="hidden">
+            <sdpi-item label="Shortcut">
+                <sdpi-select
+                    setting="pollingSettings.shortcutName"
+                    placeholder="Shortcut"
+                    datasource="getShortcuts"
+                    loading="Fetching shortcuts..."
+                    hot-reload>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Shortcut input">
+                <sdpi-textarea setting="pollingSettings.shortcutInput" rows="10"></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="pollingSettings-request-settings">
+            <sdpi-item label="URL">
+                <sdpi-textfield
+                    setting="pollingSettings.requestUrl"
+                    placeholder="https://example.com"
+                    required>
+                </sdpi-textfield>
+            </sdpi-item>
+            <sdpi-item label="Method">
+                <sdpi-select setting="pollingSettings.requestMethod" placeholder="HTTP method" required>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Request Headers">
+                <sdpi-textarea
+                        setting="pollingSettings.requestHeaders"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+            <sdpi-item label="Request Body">
+                <sdpi-textarea
+                        setting="pollingSettings.requestBody"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="pollingSettings-terminal-settings">
+            <sdpi-item label="Command">
+                <sdpi-textarea setting="pollingSettings.terminalCommand" rows="10" required></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="pollingSettings-script-settings">
+            <sdpi-item label="Script Path">
+                <sdpi-file setting="pollingSettings.scriptPath" accept="text/x-shellscript" required></sdpi-file>
+            </sdpi-item>
+            <sdpi-item label="Shell Binary">
+                <sdpi-file setting="pollingSettings.scriptShellBinary" accept="application/octet-stream"></sdpi-file>
+            </sdpi-item>
+        </div>
+
+        <script>
+            document.getElementById('pollingSettingsActionTypeCheckbox').addEventListener('valuechange', function (event) {
+                const blockIds = [
+                    `pollingSettings-shortcut-settings`,
+                    `pollingSettings-terminal-settings`,
+                    `pollingSettings-request-settings`,
+                    `pollingSettings-script-settings`,
+                ];
+
+                const targetId = `pollingSettings-${event.target.value}-settings`;
+
+                for (const id of blockIds) {
+                    document.getElementById(id).classList.toggle('hidden', id !== targetId);
+                }
+            });
+        </script>
+</div>
+<script>
+    document.getElementById('enablePolling').addEventListener('valuechange', (event) => {
+        document.getElementById('pollingSettings').classList.toggle('hidden', !event.target.value);
+    });
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        document.getElementById('pollingSettings').classList.toggle('hidden', !(settings.pollingSettings && settings.pollingSettings.enable));
+    });
+</script>
+
+<hr>
+
+<sdpi-item>
+    <sdpi-checkbox id="enableAction" setting="actionSettings.enable" label="Enable click action"></sdpi-checkbox>
+</sdpi-item>
+<div id="actionSettings" class="hidden">
+        <sdpi-item label="Action Type">
+            <sdpi-select id="actionSettingsActionTypeCheckbox" setting="actionSettings.actionType" placeholder="Action Type" onchange="alert(event)" required>
+                <option value="request">request</option>
+                <option value="shortcut">shortcut (MacOS)</option>
+                <option value="terminal">terminal</option>
+                <option value="script">script</option>
+            </sdpi-select>
+        </sdpi-item>
+        <div id="actionSettings-shortcut-settings" class="hidden">
+            <sdpi-item label="Shortcut">
+                <sdpi-select
+                    setting="actionSettings.shortcutName"
+                    placeholder="Shortcut"
+                    datasource="getShortcuts"
+                    loading="Fetching shortcuts..."
+                    hot-reload>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Shortcut input">
+                <sdpi-textarea setting="actionSettings.shortcutInput" rows="10"></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="actionSettings-request-settings">
+            <sdpi-item label="URL">
+                <sdpi-textfield
+                    setting="actionSettings.requestUrl"
+                    placeholder="https://example.com"
+                    required>
+                </sdpi-textfield>
+            </sdpi-item>
+            <sdpi-item label="Method">
+                <sdpi-select setting="actionSettings.requestMethod" placeholder="HTTP method" required>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </sdpi-select>
+            </sdpi-item>
+            <sdpi-item label="Request Headers">
+                <sdpi-textarea
+                        setting="actionSettings.requestHeaders"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+            <sdpi-item label="Request Body">
+                <sdpi-textarea
+                        setting="actionSettings.requestBody"
+                        rows="10"
+                >
+                </sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="actionSettings-terminal-settings">
+            <sdpi-item label="Command">
+                <sdpi-textarea setting="actionSettings.terminalCommand" rows="10" required></sdpi-textarea>
+            </sdpi-item>
+        </div>
+        <div id="actionSettings-script-settings">
+            <sdpi-item label="Script Path">
+                <sdpi-file setting="actionSettings.scriptPath" accept="text/x-shellscript" required></sdpi-file>
+            </sdpi-item>
+            <sdpi-item label="Shell Binary">
+                <sdpi-file setting="actionSettings.scriptShellBinary" accept="application/octet-stream"></sdpi-file>
+            </sdpi-item>
+        </div>
+
+        <script>
+            document.getElementById('actionSettingsActionTypeCheckbox').addEventListener('valuechange', function (event) {
+                const blockIds = [
+                    `actionSettings-shortcut-settings`,
+                    `actionSettings-terminal-settings`,
+                    `actionSettings-request-settings`,
+                    `actionSettings-script-settings`,
+                ];
+
+                const targetId = `actionSettings-${event.target.value}-settings`;
+
+                for (const id of blockIds) {
+                    document.getElementById(id).classList.toggle('hidden', id !== targetId);
+                }
+            });
+        </script>
+</div>
+<script>
+    document.getElementById('enableAction').addEventListener('valuechange', (event) => {
+        document.getElementById('actionSettings').classList.toggle('hidden', !event.target.value);
+    });
+    SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(({ payload: { settings } }) => {
+        document.getElementById('actionSettings').classList.toggle('hidden', !(settings.actionSettings && settings.actionSettings.enable));
+    });
+</script>
+</body>
+
+</html>

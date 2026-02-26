@@ -2,8 +2,11 @@ import { get } from 'lodash';
 
 import { MatcherSettings } from '../types';
 
+// todo: move to shared types
+export type ExecutorResult = Record<string, any> | string | null | undefined;
+
 export interface Matcher {
-  match(settings: MatcherSettings, output: Record<string, any>): boolean;
+  match(settings: MatcherSettings, output: ExecutorResult): boolean;
 }
 
 export type StringMatcherVariant = 'equals' | 'not_equals' | 'includes';
@@ -14,9 +17,9 @@ export class StringMatcher implements Matcher {
     this.variant = variant;
   }
 
-  public match(settings: MatcherSettings, output: Record<string, any>): boolean {
+  public match(settings: MatcherSettings, output: ExecutorResult): boolean {
     const { field, value: expectedValue } = settings;
-    const actualValue = get(output, field as string);
+    const actualValue = typeof output === 'object' ? get(output, field as string) : output;
 
     if (this.variant === 'includes') {
       return actualValue?.includes(expectedValue);
@@ -40,9 +43,9 @@ export class NumericalMatcher implements Matcher {
     this.variant = variant;
   }
 
-  public match(settings: MatcherSettings, output: Record<string, any>): boolean {
+  public match(settings: MatcherSettings, output: ExecutorResult): boolean {
     const { field, value: expectedValue } = settings;
-    const actualValue = get(output, field as string);
+    const actualValue = typeof output === 'object' ? get(output, field as string) : output;
 
     const expectedNumber = Number(expectedValue);
     const actualNumber = Number(actualValue);

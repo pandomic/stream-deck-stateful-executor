@@ -1,14 +1,37 @@
 {
 	"Name": "Stateful Executor",
-	"Version": "0.1.1.0",
+	"Version": "0.2.0.0",
 	"Author": "Vlad Gramuzov",
 	"Actions": [
 		{
-			"Name": "Execution",
-			"UUID": "com.vlad-gramuzov.stream-deck-stateful-executor.execution",
-			"Icon": "imgs/icons/execution",
+			"Name": "Executor",
+			"UUID": "com.vlad-gramuzov.stream-deck-stateful-executor.executor",
+			"Icon": "imgs/icons/executor",
 			"Tooltip": "Executes selected action",
-			"PropertyInspectorPath": "ui/execution.html",
+			"PropertyInspectorPath": "ui/executor.html",
+			"DisableAutomaticStates": true,
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Name": "Success",
+					"Image": "imgs/actions/matched",
+					"TitleAlignment": "bottom"
+				},
+				{
+					"Name": "Failed",
+					"Image": "imgs/actions/unmatched",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "Matcher",
+			"UUID": "com.vlad-gramuzov.stream-deck-stateful-executor.matcher",
+			"Icon": "imgs/icons/matcher",
+			"Tooltip": "Executes selected action",
+			"PropertyInspectorPath": "ui/matcher.html",
 			"DisableAutomaticStates": true,
 			"Controllers": [
 				"Keypad"

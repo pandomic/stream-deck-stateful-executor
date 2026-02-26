@@ -1,5 +1,5 @@
-import { listShortcuts, wait } from '../utils';
-import { ActionType, ExecutorSettings, PollingExecutorSettings, MatcherSettings } from '../types';
+import { listShortcuts, wait, renderTemplate } from '../utils';
+import { ActionType, ExecutorSettings, MatcherSettings, RequestMatcherSettings } from '../types';
 import { Executor, RequestExecutor, ScriptExecutor, ShortcutExecutor, TerminalExecutor } from '../executors';
 import { Matcher, StringMatcher, NumericalMatcher, StringMatcherVariant, NumericalMatcherVariant } from '../matchers';
 
@@ -33,15 +33,16 @@ import streamDeck, {
 } from "@elgato/streamdeck";
 
 const UI_GET_SHORTCUTS_DATASOURCE = 'getShortcuts';
+const TEMPLATE_ERROR_TITLE = 'Syntax!';
 
 const STATE_MATCHED = 0;
 const STATE_UNMATCHED = 1;
 
-@action({ UUID: "com.vlad-gramuzov.stream-deck-stateful-executor.execution" })
-export class RequestExecutorAction extends SingletonAction<RequestExecutorSettings> {
+@action({ UUID: "com.vlad-gramuzov.stream-deck-stateful-executor.matcher" })
+export class RequestMatcherAction extends SingletonAction<RequestMatcherSettings> {
   private pollingInProgress = false;
 
-  override async onSendToPlugin(ev: SendToPluginEvent<JsonValue, RequestExecutorSettings>): Promise<void> {
+  override async onSendToPlugin(ev: SendToPluginEvent<JsonValue, RequestMatcherSettings>): Promise<void> {
     if ((ev.payload as any).event === UI_GET_SHORTCUTS_DATASOURCE) {
       streamDeck.ui.current?.sendToPropertyInspector({
         event: UI_GET_SHORTCUTS_DATASOURCE,
@@ -50,18 +51,18 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
     }
   }
 
-  override async onWillAppear(ev: WillAppearEvent<RequestExecutorSettings>): Promise<void> {
+  override async onWillAppear(ev: WillAppearEvent<RequestMatcherSettings>): Promise<void> {
     this.pollingInProgress = true;
 
     await this.setDefaultState(ev.action as KeyAction, STATE_MATCHED);
     await this.startPolling(ev.action as KeyAction);
   }
 
-  override onWillDisappear(ev: WillDisappearEvent<RequestExecutorSettings>): Promise<void> | void {
+  override onWillDisappear(ev: WillDisappearEvent<RequestMatcherSettings>): Promise<void> | void {
     this.pollingInProgress = false;
   }
 
-  override async onKeyDown(ev: KeyDownEvent<RequestExecutorSettings>): Promise<void> {
+  override async onKeyDown(ev: KeyDownEvent<RequestMatcherSettings>): Promise<void> {
     const settings = await ev.action.getSettings();
 
     if (settings?.actionSettings?.enable) {
@@ -69,7 +70,7 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
     }
   }
 
-  private async startPolling(action: KeyAction<RequestExecutorSettings>) {
+  private async startPolling(action: KeyAction<RequestMatcherSettings>) {
     while (true) {
       const settings = await action.getSettings();
 
@@ -86,7 +87,7 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
     }
   }
 
-  private async executeJob(action: KeyAction<RequestExecutorSettings>, executor: ExecutorSettings) {
+  private async executeJob(action: KeyAction<RequestMatcherSettings>, executor: ExecutorSettings) {
     const settings = await action.getSettings();
 
     await this.setLoadingState(action);
@@ -94,9 +95,10 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
     let hasError = false;
     let matcher = null;
     let targetState = STATE_MATCHED;
+    let output = null;
 
     try {
-      const output = await executors[executor.actionType].execute(executor);
+      output = await executors[executor.actionType].execute(executor);
 
       if (Object.values(settings?.matchers ?? {}).length > 0) {
         matcher = await this.findMatcherForOutput(settings, output);
@@ -109,9 +111,9 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
     }
 
     if (matcher) {
-      await this.setMatcherState(action, matcher);
+      await this.setMatcherState(action, matcher, output);
     } else {
-      await this.setDefaultState(action, targetState);
+      await this.setDefaultState(action, targetState, output);
     }
 
     // show alerts after state changes completed
@@ -123,7 +125,7 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
   }
 
   private async findMatcherForOutput(
-    settings: RequestExecutorSettings,
+    settings: RequestMatcherSettings,
     output: any
   ) {
     return Object.values(settings.matchers ?? {}).find(matcher => {
@@ -135,61 +137,68 @@ export class RequestExecutorAction extends SingletonAction<RequestExecutorSettin
     });
   }
 
-  private async setMatcherState(action: KeyAction<RequestExecutorSettings>, matcher: MatcherSettings) {
-    await this.setDefaultState(action, STATE_MATCHED);
+  private async setMatcherState(action: KeyAction<RequestMatcherSettings>, matcher: MatcherSettings, result?: any) {
+    const settings = await action.getSettings();
 
-    if (matcher.stateTitle) {
-      await action.setTitle(matcher.stateTitle);
-    }
+    await action.setState(STATE_MATCHED);
+
     if (matcher.stateIconPath) {
       await action.setImage(matcher.stateIconPath);
+    } else if (settings.customIcons?.matched) {
+      await action.setImage(settings.customIcons.matched);
+    }
+
+    if (matcher.stateTitle) {
+      await this.setTitle(action, matcher.stateTitle, result);
+    } else if (settings.customTitles?.matched) {
+      await this.setTitle(action, settings.customTitles?.matched, result);
     }
   }
 
-  private async setDefaultState(action: KeyAction<RequestExecutorSettings>, state: number) {
+  private async setDefaultState(action: KeyAction<RequestMatcherSettings>, state: number, result?: any) {
     const settings = await action.getSettings();
 
     await action.setState(state);
 
     if (state === STATE_MATCHED) {
       await action.setImage(settings.customIcons?.matched);
-      await action.setTitle(settings.customTitles?.matched);
+      await this.setTitle(action, settings.customTitles?.matched, result);
     }
 
     if (state === STATE_UNMATCHED) {
       await action.setImage(settings.customIcons?.unmatched);
-      await action.setTitle(settings.customTitles?.unmatched);
+      await this.setTitle(action, settings.customTitles?.unmatched, result);
     }
   }
 
-  private async setLoadingState(action: KeyAction<RequestExecutorSettings>) {
+  private async setLoadingState(action: KeyAction<RequestMatcherSettings>) {
     const settings = await action.getSettings();
 
     if (settings?.customTitles?.loading) {
-      await action.setTitle(settings?.customTitles?.loading);
+      await this.setTitle(action, settings?.customTitles?.loading, {});
     }
     if (settings?.customIcons?.loading) {
       await action.setImage(settings?.customIcons?.loading);
     }
   }
-}
 
-type RequestExecutorSettings = {
-  customIcons?: {
-    matched?: string;
-    unmatched?: string;
-    loading?: string;
-  },
-  customTitles: {
-    matched?: string;
-    unmatched?: string;
-    loading?: string;
+  private async setTitle(
+    action: KeyAction<RequestMatcherSettings>,
+    title: string | null | undefined,
+    result: string | number | boolean | Record<string, any> | null | undefined,
+  ) {
+    if (!title) {
+      await action.setTitle();
+      return;
+    }
+
+    try {
+      const renderedTitle = renderTemplate(title, result);
+      await action.setTitle(renderedTitle);
+    } catch (e) {
+      streamDeck.logger.debug('Error rendering title template', e);
+      await action.setTitle(TEMPLATE_ERROR_TITLE);
+      await action.showAlert();
+    }
   }
-
-  pollingSettings?: PollingExecutorSettings;
-  actionSettings?: ExecutorSettings;
-
-  matchers?: Record<string, MatcherSettings>;
-
-  enableSuccessIndicator?: boolean;
-};
+}
