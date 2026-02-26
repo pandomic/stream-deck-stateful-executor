@@ -1,5 +1,5 @@
 import { Logger } from '@elgato/streamdeck';
-import { Executor } from './base';
+import { Executor, ExecutorResult } from './base';
 import { ExecutorSettings } from "../types";
 
 export class RequestExecutor implements Executor {
@@ -9,7 +9,7 @@ export class RequestExecutor implements Executor {
     this.logger = logger;
   }
 
-  public async execute(settings: ExecutorSettings): Promise<Record<string, any>> {
+  public async execute(settings: ExecutorSettings): Promise<ExecutorResult> {
     this.validateSettings(settings);
 
     const response = await this.makeRequest(settings);
@@ -39,9 +39,15 @@ export class RequestExecutor implements Executor {
     });
   }
 
-  private async parseResponse(response: Response): Promise<Record<string, any>> {
-    const json = await response.json();
-    this.logger.debug('Request response', json);
-    return json as Record<string, any>;
+  private async parseResponse(response: Response): Promise<ExecutorResult> {
+    const clonedResponse = response.clone();
+    try {
+      const json = await response.json();
+      this.logger.debug('Request response', json);
+      return json as Record<string, any>;
+    } catch (error) {
+      this.logger.debug('Failed to parse request response', error);
+      return await clonedResponse.text();
+    }
   }
 }

@@ -3,7 +3,7 @@ import { Logger } from '@elgato/streamdeck'
 import { readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { execSync } from 'child_process';
 
-import { Executor } from './base';
+import { Executor, ExecutorResult } from './base';
 import { ExecutorSettings } from '../types';
 
 const DEFAULT_EXEC_TIMEOUT = 10_000; // 10 seconds
@@ -15,7 +15,7 @@ export class ShortcutExecutor implements Executor {
     this.logger = logger;
   }
 
-  public async execute(settings: ExecutorSettings): Promise<Record<string, any>> {
+  public async execute(settings: ExecutorSettings): Promise<ExecutorResult> {
     this.validateSettings(settings);
 
     const { inputFilePath, outputFilePath } = this.createTempFiles();
@@ -62,17 +62,17 @@ export class ShortcutExecutor implements Executor {
   }
 
   private readOutputFromFile(outputFilePath: string) {
-    let jsonOutput = {};
+    let output = null;
 
     try {
-      const output = readFileSync(outputFilePath).toString();
+      output = readFileSync(outputFilePath).toString();
       this.logger.debug('Shortcut output', output);
-      jsonOutput = JSON.parse(output);
+      output = JSON.parse(output);
     } catch (e) {
       this.logger.debug('Unable to parse shortcut output as json');
     }
 
-    return jsonOutput;
+    return output;
   }
 
   private deleteTempFiles(inputFilePath: string, outputFilePath: string) {

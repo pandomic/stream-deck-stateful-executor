@@ -1,7 +1,7 @@
 import { Logger } from '@elgato/streamdeck';
-import { Executor } from './base';
+import { Executor, ExecutorResult } from './base';
 import { ExecutorSettings } from "../types";
-import {execSync} from "child_process";
+import { execSync } from "child_process";
 
 export class ScriptExecutor implements Executor {
   private logger: Logger;
@@ -10,7 +10,7 @@ export class ScriptExecutor implements Executor {
     this.logger = logger;
   }
 
-  public async execute(settings: ExecutorSettings): Promise<Record<string, any>> {
+  public async execute(settings: ExecutorSettings): Promise<ExecutorResult> {
     this.validateSettings(settings);
     const output = this.executeScript(settings);
     return this.parseOutput(output);
@@ -27,8 +27,14 @@ export class ScriptExecutor implements Executor {
     return execSync(`${binary} ${settings.scriptPath}`).toString().trim();
   }
 
-  private async parseOutput(output: string | null | undefined): Promise<Record<string, any>> {
+  private async parseOutput(output: string | null | undefined): Promise<ExecutorResult> {
     this.logger.debug('Script output', output);
-    return JSON.parse(output ?? '{}');
+
+    try {
+      return JSON.parse(output ?? '{}');
+    } catch (error) {
+      this.logger.debug('Failed to parse script output', error);
+      return output;
+    }
   }
 }

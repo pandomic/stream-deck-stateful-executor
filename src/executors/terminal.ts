@@ -1,7 +1,7 @@
 import { Logger } from '@elgato/streamdeck';
-import { Executor } from './base';
+import { Executor, ExecutorResult } from './base';
 import { ExecutorSettings } from "../types";
-import {execSync} from "child_process";
+import { execSync } from "child_process";
 
 export class TerminalExecutor implements Executor {
   private logger: Logger;
@@ -10,7 +10,7 @@ export class TerminalExecutor implements Executor {
     this.logger = logger;
   }
 
-  public async execute(settings: ExecutorSettings): Promise<Record<string, any>> {
+  public async execute(settings: ExecutorSettings): Promise<ExecutorResult> {
     this.validateSettings(settings);
     const output = this.executeCommand(settings);
     return this.parseOutput(output);
@@ -26,14 +26,14 @@ export class TerminalExecutor implements Executor {
     return execSync(settings.terminalCommand as string).toString().trim();
   }
 
-  private async parseOutput(output: string | null | undefined): Promise<Record<string, any>> {
+  private async parseOutput(output: string | null | undefined): Promise<ExecutorResult> {
     this.logger.debug('Terminal output', output);
 
     try {
       return JSON.parse(output ?? '{}');
     } catch (error) {
-      this.logger.error('Failed to parse terminal output', error);
-      return {};
+      this.logger.debug('Failed to parse terminal output', output, error);
+      return output;
     }
   }
 }
